@@ -71,7 +71,7 @@ class MidiDriver:
         ports = meta.ports.ports
         print ("Connection from {} on host {} port {}".format(meta.friendly_name,meta.host,meta.port))
         print ("Node type is {} version {} ".format(meta.software_package,meta.software_version))
-        for k,v in self.midi_devs:
+        for k,v in self.midi_devs.items():
             v.close()
         self.midi_devs = {}
         for port in ports:
