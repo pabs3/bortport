@@ -1,0 +1,82 @@
+syntax = 'proto3';
+
+message PortDescription {
+    enum Direction {
+        IN = 0;
+        OUT = 1;
+        INOUT = 2;
+    }
+    Direction direction = 1;
+    string name = 2;
+    bool create_dynamic = 3;
+    int32 key = 4;
+}
+
+message PortList {
+    repeated PortDescription ports = 1;
+}
+
+message PublishedMessage {
+    string topic =1;
+    string sender =2;
+    bytes message =3;
+}
+
+message SubscribeRequest {
+    string topic =1;
+    string requestNode =2;
+    bool is_subscription =3;
+}
+
+message MessageMetadata {
+    uint32 port = 1;
+    string host = 2;
+    string friendly_name = 3;
+    bool is_master = 4;
+    string software_package = 5;
+    string software_version = 6;
+    PortList ports = 7;
+}
+message Error {
+    string error_type = 1;
+    enum ErrorSeverity {
+        DEPRECATION = 0;
+        WARNING = 1;
+        ERROR = 2;
+        CATASTROPHE = 3;
+    }
+    ErrorSeverity severity = 2;
+}
+
+message MidiData {
+    uint32 channel = 1;
+    bytes data = 2;
+}
+
+
+
+message MidiMessage {
+    string message_id = 1;
+    string last_message = 2;
+    enum MessageTypes {
+        HOST_ANNOUNCE = 0;
+        HOST_RETIRE = 1;
+        RESEND_REQUESTED = 2;
+        ERROR = 3;
+        MIDI_DATA = 4;
+        ACK = 5;
+        PORT_REQUEST = 6;
+        PUBLISHED_MESSAGE =7;
+        SUBSCRIBE_REQUEST =8;
+    }
+    MessageTypes message_type = 5;
+    oneof payload {
+        MessageMetadata message_metadata = 6;
+        Error error = 7;
+        MidiData midi_data = 8;
+        string acked_message = 9;
+        PortList ports = 10;
+        PublishedMessage published_message =11;
+        SubscribeRequest subscribe_request =12;
+    }
+}

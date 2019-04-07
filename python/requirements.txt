@@ -1,0 +1,7 @@
+mido
+python-rtmidi
+msgpack
+pyuv
+protobuf
+ipdb
+flask
