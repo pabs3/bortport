@@ -12,3 +12,5 @@ The goal is to eventually reimplement in something like C or Go. Crystal lang wo
 Feel free to implement your own versions of this, and even contribute it to this repo. And pull requests are welcome.
 
 Enjoy.
+
+Please note: The C++ stuff in 'driver' is faaaar from useable. For now its just me experimenting with some libraries to figure out how they work. C++ is not my native tounge!

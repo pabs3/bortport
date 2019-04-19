@@ -71,9 +71,9 @@ class MidiDriver:
         ports = meta.ports.ports
         print ("Connection from {} on host {} port {}".format(meta.friendly_name,meta.host,meta.port))
         print ("Node type is {} version {} ".format(meta.software_package,meta.software_version))
-        for k,v in self.midi_devs.items():
-            v.close()
-        self.midi_devs = {}
+        #for k,v in self.midi_devs.items():
+        #    v.close()
+        #self.midi_devs = {}
         for port in ports:
             self.open_port(port.key, port.name, port.create_dynamic)
 
@@ -108,6 +108,9 @@ class MidiDriver:
     def open_port(self,key,port_name,virtual):
         print ("OPENING PORT: {} : {} (Virtual:{})".format(key,port_name,virtual))
         #cb = partial(self.process_midi, key)
+        if key in self.midi_devs.keys():
+            print ("Already exists")
+            return #Rethink later
         midi_dev = mido.open_ioport(name=port_name, virtual=virtual)
         self.midi_devs[key] = midi_dev
 
