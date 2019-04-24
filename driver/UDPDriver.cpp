@@ -3,66 +3,51 @@
 //
 
 #include "UDPDriver.h"
-std::string make_daytime_string()
+#include "Engine.h"
+
+UDPDriver::UDPDriver(QObject *parent) :
+        QObject(parent)
 {
-    using namespace std; // For time_t, time and ctime;
-    time_t now = time(0);
-    return ctime(&now);
+
+    socket = new QUdpSocket(this);
+
+    socket->bind(QHostAddress::LocalHost, 6901);
+
+    connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
+    std::cout << "Reading\n";
 }
 
-void error(char const *msg)
+void UDPDriver::sendPacket()
 {
-    perror(msg);
-    exit(1);
+    QByteArray Data;
+    Data.append("Hello from UDP");
+
+    // qint64 QUdpSocket::writeDatagram(const QByteArray & datagram, 
+    //                      const QHostAddress & host, quint16 port)
+    socket->writeDatagram(Data, QHostAddress::LocalHost, 1234);
 }
 
-UDPDriver::UDPDriver(boost::asio::io_context& io_context) : socket_(io_context, udp::endpoint(udp::v4(), 6901))
+void UDPDriver::readyRead()
 {
-    start_receive();
+    // when data comes in
+    QByteArray buffer;
+    buffer.resize(socket->pendingDatagramSize());
+
+    QHostAddress sender;
+    quint16 senderPort;
+
+    socket->readDatagram(buffer.data(), buffer.size(),
+                         &sender, &senderPort);
+
+    qDebug() << "Message from: " << sender.toString();
+    qDebug() << "Message port: " << senderPort;
+    qDebug() << "Message: " << buffer;
+    MidiMessage msg;
+    msg.ParseFromString(buffer.toStdString());
+    std::cout << msg.DebugString();
+    engine->processMessage(&msg);
 }
 
-void UDPDriver::start_receive()
-{
-    socket_.async_receive_from(
-            boost::asio::buffer(recv_buffer_), remote_endpoint_,
-            boost::bind(&UDPDriver::handle_receive, this,
-                        boost::asio::placeholders::error,
-                        boost::asio::placeholders::bytes_transferred));
-}
-
-void UDPDriver::handle_receive(const boost::system::error_code& error,
-                    std::size_t size /*bytes_transferred*/)
-{
-    if (!error)
-    {
-        //udp::endpoint* remote_endpoint_ = new udp::endpoint(); // endpoint object is cleaned up by handler
-        //socket_.receive_from( // Go ahead and make everything synchronous for testing purposes--------------------
-        //        boost::asio::buffer(recv_buffer_), *remote_endpoint_); // Should stay as a synchronous call to maintain a listening thread.
-        std::cout << "receive_from() called" << size << std::endl;
-
-        MidiMessage message;
-        size_t len = socket_.receive_from((recv_buffer_), remote_endpoint_);
-        std::cout.write(recv_buffer_.data(),len);
-        //std::istream* inStream = new std::istream(recv_buffer_);
-        message.ParseFromArray(recv_buffer_.data(),len);
-        std::cout << message.message_id() << "BORT" << std::endl;
-
-
-
-        /*
-         socket_.async_send_to(boost::asio::buffer(*message), remote_endpoint_,
-                               boost::bind(&UDPDriver::handle_send, this, message,
-                                           boost::asio::placeholders::error,
-                                           boost::asio::placeholders::bytes_transferred));
-         */
-        start_receive();
-    } else {
-        std::cout << "Woops\n";
-    }
-}
-
-void UDPDriver::handle_send(boost::shared_ptr<std::string> /*message*/,
-                 const boost::system::error_code& /*error*/,
-                 std::size_t /*bytes_transferred*/)
-{
+void UDPDriver::setEngine(Engine *engine) {
+    UDPDriver::engine = engine;
 }

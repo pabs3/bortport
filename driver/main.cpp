@@ -1,11 +1,20 @@
 #include <iostream>
-#import "UDPDriver.h"
-int main() {
+#include <QCoreApplication>
+#include "Engine.h"
+int main(int argc, char *argv[]) {
     try
     {
-        boost::asio::io_context io_context;
-        UDPDriver server(io_context);
-        io_context.run();
+        std::cout << "Bort Port v0.9 (C) Bort Orbital Research Temple Pty Ltd.\n====[[TO THE MOOOOOOOON]======" << std::endl;
+
+        QCoreApplication a(argc, argv);
+
+        Engine engine;
+
+//        UDPDriver client;
+        //
+//        client.HelloUDP();     //   ;
+        return a.exec();
+
     }
     catch (std::exception& e)
     {
