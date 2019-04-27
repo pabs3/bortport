@@ -65,5 +65,5 @@ void Engine::processMessage(MidiMessage *message) {
 }
 
 int Engine::messageRecieve(MidiMessage* message) {
-    udpDriver->messageSend(message);
+    return udpDriver->messageSend(message);
 }
