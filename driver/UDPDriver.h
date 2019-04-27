@@ -36,6 +36,20 @@ public slots:
 private:
     QUdpSocket *socket;
     Engine     *engine = 0;
+    QHostAddress address;
+public:
+    const QHostAddress &getAddress() const;
+
+    void setAddress(const QHostAddress &address);
+
+    int getPort() const;
+
+    void setPort(int port);
+
+    int messageSend(MidiMessage* message);
+
+private:
+    int port;
 
 };
 

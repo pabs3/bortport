@@ -16,6 +16,8 @@
 #include "midimessage.pb.h"
 #include <QObject>
 #include <QHash>
+#include <QMutexLocker>
+
 #include "RtMidi.h"
 
 #include "Engine.h"
@@ -33,18 +35,23 @@ class MidiDriver : public QObject
 public:
     explicit MidiDriver(QObject *parent = 0);
 
-    QHash<QString,MidiDevice> midi_devices;
+    QHash<int,MidiDevice> midi_devices;
 
-    int add_midi(const std::string& name);
+    int add_midi(const std::string& name,
+                 PortDescription_Direction direction,
+                 bool dynamic,
+                 int key);
+    void setEngine(Engine *engine);
+
+    void callback(int chan, double deltatime, std::vector< unsigned char > *message, void *userData );
 
 signals:
 
 public slots:
-
+    int sendMessage(MidiData data);
 private:
     Engine* engine = 0;
-public:
-    void setEngine(Engine *engine);
+    QMutex mutex;
 };
 
 

@@ -27,9 +27,9 @@ public:
     void processMessage(MidiMessage *message);
 
 signals:
-
+    int messageSend(MidiData data);
 public slots:
-
+    int messageRecieve(MidiMessage* message);
 private:
 
 

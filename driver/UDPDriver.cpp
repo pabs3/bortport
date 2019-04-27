@@ -15,16 +15,19 @@ UDPDriver::UDPDriver(QObject *parent) :
 
     connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
     std::cout << "Reading\n";
+    setAddress(QHostAddress::LocalHost);
+    setPort(6902);
+    //address = QHostAddress::LocalHost;
+    //port = 6902;
 }
 
-void UDPDriver::sendPacket()
-{
-    QByteArray Data;
-    Data.append("Hello from UDP");
 
-    // qint64 QUdpSocket::writeDatagram(const QByteArray & datagram, 
-    //                      const QHostAddress & host, quint16 port)
-    socket->writeDatagram(Data, QHostAddress::LocalHost, 1234);
+int UDPDriver::messageSend(MidiMessage* message) {
+    QByteArray data;
+    std::string serialized = message->SerializeAsString();
+    data.append(serialized.c_str(),serialized.length());
+    socket->writeDatagram(data,address,port);
+    return 1;
 }
 
 void UDPDriver::readyRead()
@@ -50,4 +53,20 @@ void UDPDriver::readyRead()
 
 void UDPDriver::setEngine(Engine *engine) {
     UDPDriver::engine = engine;
+}
+
+const QHostAddress &UDPDriver::getAddress() const {
+    return address;
+}
+
+void UDPDriver::setAddress(const QHostAddress &address) {
+    UDPDriver::address = address;
+}
+
+int UDPDriver::getPort() const {
+    return port;
+}
+
+void UDPDriver::setPort(int port) {
+    UDPDriver::port = port;
 }
