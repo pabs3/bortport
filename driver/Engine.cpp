@@ -52,7 +52,7 @@ void Engine::processMessage(MidiMessage *message) {
             break;
         }
         case MidiMessage_MessageTypes::MidiMessage_MessageTypes_MIDI_DATA: {
-            std::cout << "Data \n";
+            //std::cout << "Data \n";
             MidiData data = message->midi_data();
             //midiDriver->sendMessage(data);
             emit messageSend(data);

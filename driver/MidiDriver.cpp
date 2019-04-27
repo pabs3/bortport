@@ -17,7 +17,7 @@ struct DriverPointer {
 
 
 void static_callback(double deltatime, std::vector< unsigned char > *message, void *userData ) {
-    std::cout << message << "\n";
+    //std::cout << message << "\n";
     DriverPointer *driver = static_cast<DriverPointer *>(userData);
     driver->md->callback(driver->chan,deltatime,message,userData);
 }
@@ -33,6 +33,7 @@ int MidiDriver::add_midi(const std::string& name,
     MidiDevice mdev;
     using namespace std::placeholders;  // for _1, _2, _3...
     if (midi_devices.contains(key)) {
+        std::cout << "Channel already allocated\n";
         return 1;
     }
     mutex.lock();
@@ -85,11 +86,6 @@ int MidiDriver::add_midi(const std::string& name,
 void MidiDriver::callback(int chan,  double deltatime, std::vector< unsigned char > *message, void *userData )
 {
     unsigned int nBytes = message->size();
-    for ( unsigned int i=0; i<nBytes; i++ )
-        std::cout << "Byte " << i << " = " << (int)message->at(i) << ", ";
-    if ( nBytes > 0 )
-        std::cout << "stamp = " << deltatime << std::endl;
-
     MidiMessage* midiMessage = new MidiMessage;
     midiMessage->set_message_type(MidiMessage_MessageTypes_MIDI_DATA);
     MidiData* midiData = new MidiData;
@@ -104,7 +100,7 @@ void MidiDriver::callback(int chan,  double deltatime, std::vector< unsigned cha
 
 
 int MidiDriver::sendMessage(MidiData data) {
-    std::cout << "Sending data" << data.DebugString() << "\n";
+    //std::cout << "Sending data" << data.DebugString() << "\n";
     int channel = data.channel();
     if (!midi_devices.contains(channel)) {
         std::cout << "Refusing. No Midi channel allocated" << "\n";

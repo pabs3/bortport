@@ -1,0 +1,4 @@
+/Users/shayneoneill/DawDriver/driver/CMakeFiles/rebuild_cache.dir
+/Users/shayneoneill/DawDriver/driver/CMakeFiles/edit_cache.dir
+/Users/shayneoneill/DawDriver/driver/CMakeFiles/driver.dir
+/Users/shayneoneill/DawDriver/driver/CMakeFiles/driver_autogen.dir

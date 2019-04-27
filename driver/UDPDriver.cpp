@@ -14,7 +14,7 @@ UDPDriver::UDPDriver(QObject *parent) :
     socket->bind(QHostAddress::LocalHost, 6901);
 
     connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
-    std::cout << "Reading\n";
+    //std::cout << "Reading\n";
     setAddress(QHostAddress::LocalHost);
     setPort(6902);
     //address = QHostAddress::LocalHost;
@@ -42,12 +42,12 @@ void UDPDriver::readyRead()
     socket->readDatagram(buffer.data(), buffer.size(),
                          &sender, &senderPort);
 
-    qDebug() << "Message from: " << sender.toString();
-    qDebug() << "Message port: " << senderPort;
-    qDebug() << "Message: " << buffer;
+    //qDebug() << "Message from: " << sender.toString();
+    //qDebug() << "Message port: " << senderPort;
+    //qDebug() << "Message: " << buffer;
     MidiMessage msg;
     msg.ParseFromString(buffer.toStdString());
-    std::cout << msg.DebugString();
+    //std::cout << msg.DebugString();
     engine->processMessage(&msg);
 }
 
