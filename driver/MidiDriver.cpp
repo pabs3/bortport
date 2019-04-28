@@ -33,7 +33,7 @@ int MidiDriver::add_midi(const std::string& name,
     MidiDevice mdev;
     using namespace std::placeholders;  // for _1, _2, _3...
     if (midi_devices.contains(key)) {
-        std::cout << "Channel already allocated\n";
+        engine->raiseError(Error_ErrorSeverity_WARNING,"Channel already allocated");
         return 1;
     }
     mutex.lock();
@@ -70,6 +70,7 @@ int MidiDriver::add_midi(const std::string& name,
     }
     catch ( RtMidiError &error ) {
         error.printMessage();
+        engine->raiseError(Error_ErrorSeverity_ERROR,error.getMessage());
         return -1;
         //exit( EXIT_FAILURE );
     }
@@ -104,6 +105,7 @@ int MidiDriver::sendMessage(MidiData data) {
     int channel = data.channel();
     if (!midi_devices.contains(channel)) {
         std::cout << "Refusing. No Midi channel allocated" << "\n";
+        engine->raiseError(Error_ErrorSeverity_ERROR,"NO CHANNEL ALLOCATED");
         return -1;
     }
     std::string dat = data.data();
@@ -119,6 +121,7 @@ int MidiDriver::sendMessage(MidiData data) {
         return 1;
     } catch ( RtMidiError &error ) {
         error.printMessage();
+        engine->raiseError(Error_ErrorSeverity_ERROR,error.getMessage());
         mutex.unlock();
 
         return -1;

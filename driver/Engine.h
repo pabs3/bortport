@@ -25,6 +25,7 @@ public:
     explicit Engine(QObject *parent = 0);
 
     void processMessage(MidiMessage *message);
+    void raiseError (Error_ErrorSeverity severity, std::string description);
 
 signals:
     int messageSend(MidiData data);

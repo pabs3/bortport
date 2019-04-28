@@ -17,12 +17,19 @@ Engine::Engine(QObject *parent)  : QObject(parent) {
     midiDriver = new MidiDriver;
     udpDriver->setEngine(this);
     midiDriver->setEngine(this);
-
     connect (this,&Engine::messageSend,midiDriver,&MidiDriver::sendMessage);
-
-
 }
 
+
+void Engine::raiseError (Error_ErrorSeverity severity, std::string description) {
+    Error* error = new Error;
+    error->set_severity(severity);
+    error->set_error_type(description);
+    MidiMessage* mm = new MidiMessage;
+    mm->set_message_type(MidiMessage_MessageTypes_ERROR);
+    mm->set_allocated_error(error);
+    udpDriver->messageSend(mm);
+}
 void Engine::processMessage(MidiMessage *message) {
 
     switch (message->message_type()) {
@@ -65,5 +72,5 @@ void Engine::processMessage(MidiMessage *message) {
 }
 
 int Engine::messageRecieve(MidiMessage* message) {
-    udpDriver->messageSend(message);
+    return udpDriver->messageSend(message);
 }
