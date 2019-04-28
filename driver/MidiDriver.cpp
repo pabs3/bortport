@@ -31,7 +31,6 @@ int MidiDriver::add_midi(const std::string& name,
     RtMidiIn *inPort = 0;
     RtMidiOut *outPort = 0;
     MidiDevice mdev;
-    using namespace std::placeholders;  // for _1, _2, _3...
     if (midi_devices.contains(key)) {
         engine->raiseError(Error_ErrorSeverity_WARNING,"Channel already allocated");
         return 1;

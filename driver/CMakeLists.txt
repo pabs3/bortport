@@ -42,6 +42,7 @@ add_compile_definitions(__RTMIDI_DEBUG__ )
 add_compile_definitions(__MACOSX_CORE__)
 
 find_package(Protobuf REQUIRED)
+PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_HDRS ${PROJECT_SOURCE_DIR}/../protobuf/src/midimessage.proto)
 
 include_directories('.')
 include_directories('/Users/shayneoneill/Qt/5.12.1/clang_64/include')
@@ -49,7 +50,7 @@ include_directories('/Users/shayneoneill/Qt/5.12.1/clang_64/include')
 
 
 
-add_executable(driver main.cpp midimessage.pb.cc midimessage.pb.h UDPDriver.cpp UDPDriver.h MidiDriver.cpp MidiDriver.h Engine.cpp Engine.h RtMidi.cpp RtMidi.h)
+add_executable(driver main.cpp ${PROTO_SRCS} ${PROTO_HDRS} UDPDriver.cpp UDPDriver.h MidiDriver.cpp MidiDriver.h Engine.cpp Engine.h RtMidi.cpp RtMidi.h)
 
 target_link_libraries(driver ${Protobuf_LIBRARIES})
 target_link_libraries(driver Qt5::Core)
